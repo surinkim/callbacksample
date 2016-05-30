@@ -23,3 +23,17 @@ public:
 protected:
   int _callbackType;
 };
+
+template < typename T, typename P >
+class Callback : public CallbackBase
+{
+public:
+  typedef void ( T::*Func ) ( P* );
+  
+  Callback( T* object, Func func ) : _object( object ), _func( func ) { _callbackType = P::CALLBACK_TYPE; };
+  void Invoke( void* param ) const { ( _object->*_func )( ( P* ) param ); }
+  
+private:
+  T* _object;
+  Func _func;
+};
