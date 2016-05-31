@@ -43,7 +43,16 @@ class Library
 public:
   void Start()
   {
-    std::cout << "Start Lib." << std::endl;  
+    std::cout << "Start Lib." << std::endl;
+    
+    if ( _onStart )
+    {
+      StartResult result;
+      result.errorCode = 102;
+      
+      ( _onStart )->Invoke( ( StopResult* )&result );
+    }
+    
   }
   
   void Stop()
@@ -64,3 +73,31 @@ private:
   CallbackBase* _onStart;
   CallbackBase* _onStop;
 };
+
+
+class Client
+{
+public:
+  void OnStart( StartResult* result )
+  {
+    std::cout << "OnStart - error : " << result->errorCode << std::endl;
+  }
+};
+
+int main()
+{
+  Client client;
+  Callback< Client, StartResult > callbackStart( &client, &Client::OnStart );
+  
+  Library lib;
+  lib.SetCallback( callbackStart );
+  lib.Start();
+  
+  Sleep( 1000 );
+  
+  lib.Stop();
+  
+  getchar();
+  
+  return 0;
+}
