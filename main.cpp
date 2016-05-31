@@ -37,3 +37,30 @@ private:
   T* _object;
   Func _func;
 };
+
+class Library
+{
+public:
+  void Start()
+  {
+    std::cout << "Start Lib." << std::endl;  
+  }
+  
+  void Stop()
+  {
+    std::cout << "Stop Lib." << std::endl;
+  }
+  
+  void SetCallback( CallbackBase& callback )
+  {
+    if ( callback.GetType() == ACT_TYPE_CALLBACK + 1 )  
+    {
+      _onStart = &callback;
+    }
+  }
+  
+  
+private:
+  CallbackBase* _onStart;
+  CallbackBase* _onStop;
+};
