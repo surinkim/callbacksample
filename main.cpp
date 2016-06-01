@@ -73,11 +73,6 @@ public:
     }
   }
   
-  void Stop()
-  {
-    std::cout << "Stop Lib." << std::endl;
-  }
-  
   void SetCallback( CallbackBase& callback )
   {
     if ( callback.GetType() == ACT_TYPE_CALLBACK + 1 )  
