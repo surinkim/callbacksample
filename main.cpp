@@ -11,6 +11,12 @@ struct StartResult
   int errorCode;
 };
 
+struct StopResult
+{
+  enum { CALLBACK_TYPE = ACT_TYPE_CALLBACK + 2 };
+  int dummyValue;
+};
+
 ////////////////////////////////////////////////////
 class CallbackBase
 {
@@ -50,9 +56,21 @@ public:
       StartResult result;
       result.errorCode = 102;
       
-      ( _onStart )->Invoke( ( StopResult* )&result );
+      ( _onStart )->Invoke( ( StartResult* )&result );
     }
+  }
+  
+  void Stop()
+  {
+    std::cout << "Stop Lib." << std::endl;
     
+    if ( _onStop )
+    {
+      StopResult result;
+      result.dummyValue = 105;
+      
+      ( _onStop )->Invoke( ( StopResult* )&result );
+    }
   }
   
   void Stop()
@@ -65,6 +83,10 @@ public:
     if ( callback.GetType() == ACT_TYPE_CALLBACK + 1 )  
     {
       _onStart = &callback;
+    }
+    else if ( callback.GetType() == ACT_TYPE_CALLBACK + 2 )
+    {
+      _onStop = &callback;
     }
   }
   
@@ -82,15 +104,22 @@ public:
   {
     std::cout << "OnStart - error : " << result->errorCode << std::endl;
   }
+  
+  void OnStop( StopResult& result )
+  {
+    std::cout << "OnStop -dummyValue : " << result->dummyValue << std::endl;
+  }
 };
 
 int main()
 {
   Client client;
   Callback< Client, StartResult > callbackStart( &client, &Client::OnStart );
+  Callback< Client, StopResult > callbackStop( &client, &Client::OnStop );
   
   Library lib;
   lib.SetCallback( callbackStart );
+  lib.SetCallback( callbackStop );
   lib.Start();
   
   Sleep( 1000 );
