@@ -1,2 +1,3 @@
 # callbacksample
-callback sample with class member function
+callback sample, without using `std::function`, `std::bind`.
+
